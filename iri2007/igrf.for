@@ -29,6 +29,7 @@ C 2007.00 05/18/07 Release of IRI-2007
 C
         subroutine igrf_sub(xlat,xlong,year,height,
      &          xl,icode,dipl,babs)
+
 c-----------------------------------------------------------------------        
 c INPUT:
 c    xlat      geodatic latitude in degrees
@@ -53,12 +54,19 @@ C
 c
 C----------------CALCULATE PROFILES-----------------------------------
 c
-        CALL FELDCOF(YEAR,DIMO)
-        CALL FELDG(LATI,LONGI,HEIGHT,BNORTH,BEAST,BDOWN,BABS)
-        CALL SHELLG(LATI,LONGI,HEIGHT,DIMO,XL,ICODE,BAB1)
-c        DIP=ASIN(BDOWN/BABS)/UMR
-c       DEC=ASIN(BEAST/SQRT(BEAST*BEAST+BNORTH*BNORTH))/UMR
-c        DIPL=ATAN(0.5*TAN(DIP*UMR))/UMR
+        ! CALL FELDCOF(YEAR,DIMO)
+        ! CALL FELDG(LATI,LONGI,HEIGHT,BNORTH,BEAST,BDOWN,BABS)
+
+        ! print *, 'orig: ', BNORTH, BEAST, BDOWN, BABS
+        !! CALL SHELLG(LATI,LONGI,HEIGHT,DIMO,XL,ICODE,BAB1)
+        call igrf12syn(0, year,1, height, 90.0 - lati, longi, BNORTH, BEAST, BDOWN, BABS)
+        ! convert nanotesla to Gauss
+        BNORTH = BNORTH*1e-5
+        BEAST  = BEAST*1e-5
+        BDOWN  = BDOWN*1e-5
+        BABS   = BABS*1e-5
+        ! print *, 'fast: ', BNORTH, BEAST, BDOWN, BABS
+
        DIPL=ATAN(BDOWN/2.0/sqrt(BNORTH*BNORTH+BEAST*BEAST))/umr
       RETURN
       END
@@ -87,8 +95,17 @@ c
 		xlati = xlat
 		xlongi = xlong
 		h = height
-        CALL FELDCOF(YEAR,DIMO)
-        CALL FELDG(XLATI,XLONGI,H,BNORTH,BEAST,BDOWN,BABS)
+        ! CALL FELDCOF(YEAR,DIMO)
+        ! CALL FELDG(XLATI,XLONGI,H,BNORTH,BEAST,BDOWN,BABS)
+
+        call igrf12syn(0, year,1, height, 90.0 - xlati, xlongi, BNORTH, BEAST, BDOWN, BABS)
+        ! convert nanotesla to Gauss
+        BNORTH = BNORTH*1e-5
+        BEAST  = BEAST*1e-5
+        BDOWN  = BDOWN*1e-5
+        BABS   = BABS*1e-5
+
+
         DIP=ASIN(BDOWN/BABS)
         dipdiv=DIP/SQRT(DIP*DIP+cos(XLATI*UMR))
         IF(ABS(dipdiv).GT.1.) dipdiv=SIGN(1.,dipdiv)
@@ -670,8 +687,10 @@ C-- DETERMINE IGRF-YEARS FOR INPUT-YEAR
         FIL2 = FILMOD(L+1) 
 C-- GET IGRF COEFFICIENTS FOR THE BOUNDARY YEARS
         CALL GETSHC (IU, FIL1, NMAX1, ERAD, GH1, IER)  
+        ! CALL GETSHC_DAT (DBLE(DTE1), NMAX1, ERAD, GH1, IER)  
             IF (IER .NE. 0) STOP                           
         CALL GETSHC (IU, FIL2, NMAX2, ERAD, GH2, IER)  
+        ! CALL GETSHC_DAT (DBLE(DTE2), NMAX2, ERAD, GH2, IER)  
             IF (IER .NE. 0) STOP
 C-- DETERMINE IGRF COEFFICIENTS FOR YEAR
         IF (L .LE. NUMYE-1) THEN                        
@@ -714,7 +733,8 @@ C-- DETERMINE MAGNETIC DIPOL MOMENT AND COEFFIECIENTS G
         END
 C
 C
-        SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)           
+        SUBROUTINE GETSHC (IU, FSPEC, NMAX, ERAD, GH, IER)
+
                                                                                 
 C ===============================================================               
 C                                                                               
@@ -781,6 +801,7 @@ C ---------------------------------------------------------------
         DO 2211 NN = 1, NMAX                                              
             DO 2233 MM = 0, NN
                 READ (IU, *, IOSTAT=IER, ERR=999) N, M, G, H 
+                ! print *, N, M, G, H
                 IF (NN .NE. N .OR. MM .NE. M) THEN                   
                     IER = -2                                         
                     GOTO 999                                         
@@ -932,7 +953,7 @@ C ---------------------------------------------------------------
         END                                                            
 C
 C
-        SUBROUTINE INITIZE
+        SUBROUTINE  INITIZE
 C----------------------------------------------------------------
 C Initializes the parameters in COMMON/IGRF1/
 C

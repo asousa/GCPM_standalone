@@ -6,13 +6,12 @@ EXT =
 sources = \
 	cira.for \
 	igrf.for \
+	igrf12.for \
 	iridreg.for \
 	irifun.for \
 	irisub.for \
 	iritec.for \
-	iritest.for
-
-# 	igrf12.for \
+	iritest.for 
 
 # FLAGS = -g -O3 -Wall
 
@@ -36,10 +35,10 @@ clean:
 	${RM} *.a
 
 iri${EXT}: ${OBJECTS}
-	${fcompiler} ${FLAGS} -o iri${EXT} iritest.o irisub.o irifun.o iritec.o iridreg.o igrf.o cira.o -fPIC
+	${fcompiler} ${FLAGS} -o iri${EXT} iritest.o irisub.o irifun.o iritec.o iridreg.o igrf.o igrf12.o cira.o -fPIC
 
 libiri.a: ${OBJECTS}
-	ar rc libiri.a iritest.o irisub.o irifun.o iritec.o iridreg.o igrf.o cira.o
+	ar rc libiri.a iritest.o irisub.o irifun.o iritec.o iridreg.o igrf.o igrf12.o cira.o
 
 test:
 	${fcompiler} iritest.for ${OBJECTS} -o test

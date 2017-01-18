@@ -5778,7 +5778,6 @@ c
 c the indices are obtained from the indices file ig_rz.dat that is 
 c read in subroutine initialize and stored in COMMON/indices/
 c----------------------------------------------------------------
-
            integer      yr, mm, day, iflag, iyst, iyend,iymst
            integer      imst,iymend
            real         ionoindx(722),indrz(722)

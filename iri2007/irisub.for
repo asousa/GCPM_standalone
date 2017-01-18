@@ -253,6 +253,7 @@ C*****************************************************************
       REAL       LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR,INVDIP,  
      &               NMF1,NME,NMD,MM,MLAT,MLONG,NOBO2
       CHARACTER  FILNAM*12
+      INTEGER kk, KI
 c-web-for webversion
 c      CHARACTER FILNAM*53
 
@@ -287,19 +288,19 @@ c      CHARACTER FILNAM*53
         save
         
 
-        DO 7397 KI=1,20
-        do 7397 kk=1,100
-7397    OUTF(KI,kk)=-1.
+!         DO 7397 KI=1,20
+!         do 7397 kk=1,100
+! 7397    OUTF(KI,kk)=-1.
 
-        do 8398 kind=7,14,1
-8398    oarr(kind)=-1.
-        do 8378 kind=17,32,1
-8378    oarr(kind)=-1.
-        do 8478 kind=34,38,1
-8478    oarr(kind)=-1.
-        oarr(40)=-1.
-        do 8428 kind=42,50,1
-8428    oarr(kind)=-1.
+!         do 8398 kind=7,14,1
+! 8398    oarr(kind)=-1.
+!         do 8378 kind=17,32,1
+! 8378    oarr(kind)=-1.
+!         do 8478 kind=34,38,1
+! 8478    oarr(kind)=-1.
+!         oarr(40)=-1.
+!         do 8428 kind=42,50,1
+! 8428    oarr(kind)=-1.
 
 C
 C PROGRAM CONSTANTS

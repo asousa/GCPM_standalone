@@ -3,7 +3,7 @@ RM = rm -f
 
 
 
-export fcompiler=gfortran
+export fcompiler=g95
 
 LIBS = -Lgcpm -lgcpm -Lxform -lxform -Liri2007 -liri
 # LIBS = -Lxform -lxform 
@@ -12,12 +12,14 @@ LIBS = -Lgcpm -lgcpm -Lxform -lxform -Liri2007 -liri
 # Use the -fstatic option with g95.  With gfortran, use -fno-automatic
 
 ifeq "$(fcompiler)" "g95"
-export FLAGS = -g -Wall -fstatic -ffixed-line-length-132 -ffree-line-length-huge -fno-second-underscore
+export FLAGS = -pg -Wall -fstatic -ffixed-line-length-132 -ffree-line-length-huge -fno-second-underscore
 endif
 ifeq "$(fcompiler)" "gfortran"
-export FLAGS = -g -Wall -fno-automatic -ffixed-line-length-132 -ffree-line-length-132 -fd-lines-as-code -finit-local-zero 
+export FLAGS = -pg -Wall -fno-automatic -ffixed-line-length-132 -ffree-line-length-132 -fd-lines-as-comments -finit-local-zero 
 endif
-
+ifeq "(fcompiler)" "gcc"
+export FLAGS = -pg -Wall
+endif
 
 
 _gcpm_sources = \
@@ -110,11 +112,12 @@ shared:
 
 
 test: 
-	${fcompiler} test_gcpm.f95 ${LIBS} -o bin/test_gcpm
-	cp iri2007/dgrf* bin
-	cp iri2007/ursi* bin
-	cp iri2007/ccir* bin
-
+	${fcompiler} ${FLAGS} test_gcpm.f95 ${LIBS} -o bin/test_gcpm
+	# cp iri2007/dgrf* bin
+	# cp iri2007/ursi* bin
+	# cp iri2007/ccir* bin
+	cp iri2007/*.dat bin
+	cp iri2007/*.asc bin
 	# ${fcompiler} test_gcpm.f95 ${gcpm_objects} ${iri_objects} ${xform_objects} -o test_gcpm
 
 

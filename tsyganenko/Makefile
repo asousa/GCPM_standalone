@@ -31,9 +31,9 @@ libtsy.a: ${OBJECTS}
 	ar rc libtsy.a ${OBJECTS}
 
 .for.o:
-	${G95} ${FLAGS} -c $<
+	${fcompiler} ${FLAGS} -c $<
 
 .f95.o:
-	${G95} ${FLAGS} -c $<
+	${fcompiler} ${FLAGS} -c $<
 
 %.o : %.mod  
